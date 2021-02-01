@@ -5,25 +5,21 @@ namespace PruebaPhp;
 /**
  * Impresora class.
  */
-class Impresora {
+class Impresora implements Imprimible {
 
-  protected $estado = 0;
+  protected $estado = 1;
 
   protected $mensaje;
 
   /**
    * function imprimir.
    */
-  public function imprimir($mensaje = "") {
-    if (!empty($mensaje)) {
+  public function imprimir(string $mensaje = "") : void {
+    if ($this->estado == 1) {
       echo "La impresora imprime: $mensaje";
-    } else {
-      if ($this->estado == 1) {
-        echo "La impresora imprime: $this->mensaje";
-      }
-      else {
-        echo "La impresora esta apagada";
-      }
+    }
+    else {
+      echo "La impresora esta apagada";
     }
   }
 
