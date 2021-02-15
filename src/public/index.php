@@ -10,47 +10,33 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Slim\App;
 use Slim\Container;
 use Slim\Views\PhpRenderer;
-use PruebaPhp\ImpresoraPapel;
-use PruebaPhp\Impresora;
-use Modelo\user\Usuario;
+use PruebaPhp\util\db\QueryMysql;
 
+$config = [];
+require 'settings.php';
 require '../../vendor/autoload.php';
-$configuration = [
-  'settings' => [
-    'displayErrorDetails' => TRUE,
-  ],
-];
-$c = new Container($configuration);
+$c = new Container(['settings' => $config] );
+
 $app = new App($c);
 
 // Set Slim container.
 $container = $app->getContainer();
 $container['view'] = new PhpRenderer('../templates/');
+$container['db'] = function ($c) {
+  $db = $c['settings']['db'];
+  $pdo = new PDO('mysql:host=' . $db['host'] . ';dbname=' . $db['dbname'], $db['user'], $db['pass']);
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+  return $pdo;
+};
 
 $app->get('/', function (Request $request, Response $response) {
-
-  $impresora = new ImpresoraPapel();
-
-  $usuario = new Usuario("Nombre", "Apellido");
-
-  $nombre = $usuario->imprimirNombre($impresora);
-
-  echo "<br>";
-
-  // $impresoraHija = new ImpresoraPapel();
-  // $impresoraHija->encederImpresora();
-  // $impresoraHija->agregarMensaje("HOLA JULIAN");
-  // $impresoraHija->imprimir();
-  // echo "<br>";
-  // $impresoraHija->apagarImpresora();
-  // $impresoraHija->imprimir();
-
-  // echo "<br>";
-
-  // $impresoraHija2 = new ImpresoraPapel();
-  // $impresoraHija2->agregarMensaje("HOLA DIEGO");
-  // $impresoraHija2->imprimir();
-
+  $query = new QueryMysql($this->db);
+  $query->insert('pais', ['name'], ['Venezuela']);
+  $conditions = [
+    ['column' => 'id', 'value' => 13],
+  ];
+  $query->delete('pais', $conditions);
   return $response;
 });
 
