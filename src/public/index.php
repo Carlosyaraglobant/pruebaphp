@@ -32,11 +32,15 @@ $container['db'] = function ($c) {
 
 $app->get('/', function (Request $request, Response $response) {
   $query = new QueryMysql($this->db);
-  $query->insert('pais', ['name'], ['Venezuela']);
+  //$query->insert('pais', ['name'], ['Venezuela']);
+  $fields = ['name'];
   $conditions = [
-    ['column' => 'id', 'value' => 13],
+    ['column' => 'name', 'value' => 'Colombia'],
+    ['column' => 'name', 'value' => 'Bolivia'],
   ];
-  $query->delete('pais', $conditions);
+  $return = $query->find('pais', $fields, $conditions, 'OR');
+  var_dump($return);
+  //$query->delete('pais', $conditions);
   return $response;
 });
 

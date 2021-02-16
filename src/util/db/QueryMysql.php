@@ -33,7 +33,7 @@ class QueryMysql implements QueryInterface {
    * @{inheret}
    */
   public function delete(String $tableName, array $conditions) {
-    $whereConditions = NULL;
+    $whereConditions = [];
     $values = [];
     foreach ($conditions as $condition) {
       if ($condition['column'] && $condition['value']) {
@@ -46,6 +46,66 @@ class QueryMysql implements QueryInterface {
 
     $query = "DELETE FROM $tableName WHERE $whereString";
     $this->conection->prepare($query)->execute($values);
+  }
+
+  /**
+   *
+   */
+  public function update(String $tableName, array $updateValues, array $conditions) {
+
+    $setValues = [];
+    $values = [];
+    foreach ($updateValues as $updateValue) {
+      if ($updateValue['column'] && $updateValue['value']) {
+        $setValues[] = $updateValue['column'] . " = ?";
+        $values[] = $updateValue['value'];
+      }
+    }
+    $setString = implode(", ", $setValues);
+    if (empty($setString)) {
+      return;
+    }
+
+    $whereConditions = [];
+    foreach ($conditions as $condition) {
+      if ($condition['column'] && $condition['value']) {
+        $operator = isset($condition['operator']) ? $condition['operator'] : '=';
+        $whereConditions[] = $condition['column'] . " " . $operator . " ?";
+        $values[] = $condition['value'];
+      }
+    }
+    $whereString = implode(" AND ", $whereConditions);
+    if (empty($whereString)) {
+      return;
+    }
+    $query = "UPDATE $tableName SET $setString WHERE $whereString";
+    $this->conection->prepare($query)->execute($values);
+  }
+
+  /**
+   * @{inheret}
+   */
+  public function find(String $tableName, array $fields = [], array $conditions = [], $typeCondition = "") {
+    $whereConditions = [];
+    $values = [];
+    $fieldsString = count($fields) ? implode(", ", $fields) : "*";
+    $query = "SELECT $fieldsString FROM $tableName";
+    foreach ($conditions as $condition) {
+      if ($condition['column'] && $condition['value']) {
+        $operator = isset($condition['operator']) ? $condition['operator'] : '=';
+        $whereConditions[] = $condition['column'] . " " . $operator . " ?";
+        $values[] = $condition['value'];
+      }
+    }
+    $typeCondition = $typeCondition == "OR" ? $typeCondition : "AND";
+    $whereString = implode(" $typeCondition ", $whereConditions);
+
+    if (!empty($whereString)) {
+      $query = $query . " WHERE $whereString";
+    }
+    $stmt = $this->conection->prepare($query);
+    $stmt->execute($values);
+    return $stmt->fetchAll();
   }
 
 }
