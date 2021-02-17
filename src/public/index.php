@@ -11,6 +11,8 @@ use Slim\App;
 use Slim\Container;
 use Slim\Views\PhpRenderer;
 use PruebaPhp\util\db\QueryMysql;
+use PruebaPhp\model\Pais;
+use PruebaPhp\model\mysql\StoragePais;
 
 $config = [];
 require 'settings.php';
@@ -32,15 +34,10 @@ $container['db'] = function ($c) {
 
 $app->get('/', function (Request $request, Response $response) {
   $query = new QueryMysql($this->db);
-  //$query->insert('pais', ['name'], ['Venezuela']);
-  $fields = ['name'];
-  $conditions = [
-    ['column' => 'name', 'value' => 'Colombia'],
-    ['column' => 'name', 'value' => 'Bolivia'],
-  ];
-  $return = $query->find('pais', $fields, $conditions, 'OR');
-  var_dump($return);
-  //$query->delete('pais', $conditions);
+  $storage = new StoragePais($query);
+  //$pais = new Pais('Italia');
+  $paises = $storage->getAll();
+  var_dump($paises);
   return $response;
 });
 

@@ -20,7 +20,6 @@ class QueryMysql implements QueryInterface {
    * @{inheret}
    */
   public function insert(String $tableName, array $columns, array $values) {
-
     $valor = count($values);
     $interrogacion = array_fill(0, $valor, "?");
     $columnsString = implode(",", $columns);
