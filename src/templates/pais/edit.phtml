@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Registro</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+  <div class="form register-form">
+    <?php if($pais): ?>
+    <h1>Edicion del pais <?= $pais->getNombre() ?></h1>
+    <form action="/pais/<?= $pais->getId() ?>/edit" method="post">
+      <label for="name">Nombre: </label>
+      <input type="text" name="name" value="<?= $pais->getNombre() ?>">
+      <br>
+      <input type="submit" value="Guardar">
+    </form>
+    <?php else: ?>
+    <h1>El Pais no existe</h1>
+    <?php endif; ?>
+  </div>
+</body>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Listado de Paises</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Listado Paises</h1>
+    <table>
+      <tr>
+        <th>Id</th>
+        <th>Nombre</th>
+        <th>Operaciones</th>
+      </tr>
+      <?php foreach($paises as $pais): ?>
+      <tr>
+        <td><?=$pais->getId()?></td>
+        <td><?=$pais->getNombre()?></td>
+        <td>
+          <a href="/pais/<?=$pais->getId()?>/edit"><button>Editar</button></a>
+          <a href="/pais/<?=$pais->getId()?>/delete"><button>Eliminar</button></a>
+        </td>
+      </tr>
+      <?php endforeach; ?>
+    </table>
+
+  </div>
+</body>
