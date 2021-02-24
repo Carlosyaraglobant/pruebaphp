@@ -11,8 +11,10 @@ use Slim\App;
 use Slim\Container;
 use Slim\Views\PhpRenderer;
 use PruebaPhp\util\db\QueryMysql;
-use PruebaPhp\model\Pais;
-use PruebaPhp\model\mysql\StoragePais;
+use PruebaPhp\controllers\pais\OverviewController;
+use PruebaPhp\controllers\pais\ViewController;
+use PruebaPhp\controllers\pais\EditController;
+use PruebaPhp\controllers\pais\UpdateController;
 
 $config = [];
 require 'settings.php';
@@ -31,15 +33,13 @@ $container['db'] = function ($c) {
   $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
   return $pdo;
 };
+$container['dbMysql'] = new QueryMysql($container['db']);
 
-$app->get('/', function (Request $request, Response $response) {
-  $query = new QueryMysql($this->db);
-  $storage = new StoragePais($query);
-  //$pais = new Pais('Italia');
-  $paises = $storage->getAll();
-  var_dump($paises);
-  return $response;
-});
+
+$app->get('/pais', OverviewController::class);
+$app->get('/pais/{id}', ViewController::class);
+$app->get('/pais/{id}/edit', EditController::class);
+$app->post('/pais/{id}/edit', UpdateController::class);
 
 $app->get('/registro', function (Request $request, Response $response) {
   $response = $this->view->render($response, 'registro.phtml');
